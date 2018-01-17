@@ -259,7 +259,9 @@ defaults:
     toc: true
     toc_label: "Content"
     header:
-      image: "/assets/images/header.jpg"
+      overlay_image: "/assets/images/header.jpg"
+      header: "Noosa Heads, Qld, Aus"
+      overlay_filter: 0.5
 collections:
   portfolio:
     output: true
