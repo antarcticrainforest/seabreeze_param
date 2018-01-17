@@ -132,18 +132,18 @@ subroutine just_a_test( landfrac,icefrac,dist,lon, &
 end subroutine just_a_test
 ```
 
-**Note-1:**
-The ```a_swapping_boundaries_mod``` module and the ```swap``` have to be
+**Note:** The ```a_swapping_boundaries_mod``` module and the ```swap``` have to be
 replaced by the appropriate modules and calls according to the models boundary 
 swapping routine.
+{: .notice--info}
 
 
-**Note-2:**
-Since boundary swapping is necessary to apply the above routines it is 
+**Caution:** Since boundary swapping is necessary to apply the above routines it is 
 strongly suggested that they are called *before* any atmospheric physics is called.
 Calling the routine from within any atmospheric physics routine will (depending 
 on the implementation of the model) result in a communication overflow and hence 
-reduce the performence of the model significantly. 
+reduce the performence of the model significantly.
+{: .notice--warning} 
 
 
 
@@ -153,10 +153,10 @@ reduce the performence of the model significantly.
 strength. This routine can be called from within any of the atmospheric physics 
 routines, but perferably *before* the cumulus scheme is involved. 
 
-**Note:** 
-```sea_breeze_diag``` makes use of the surface temperature field. If this 
+**Caution:** The routine makes use of the surface temperature field. If this 
 field hasn't been subject to boundary swapping it is adviced to do boundary_swapping 
 of the surface temp field *before* ```sea_breeze_diag``` is called.
+{: .notice--warning}
 
 
 #### Variables:
@@ -206,7 +206,7 @@ that that calls ```sea_breeze_diag``` goes out of scope. The simplist way of pre
 the content of the array is involving a ```save``` statement. But many other ways 
 are possible, like pointers, depending on the models ifrastructure. The above variables 
 are mandatory. Other variables might be subject to the models implementations 
-and infrastructure.
+and infrastructure. {: .notice--info}
 
 The following code snipset should serve as a minimal example of how to call the routine:
 ```fortran
