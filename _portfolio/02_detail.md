@@ -206,7 +206,8 @@ that that calls ```sea_breeze_diag``` goes out of scope. The simplist way of pre
 the content of the array is involving a ```save``` statement. But many other ways 
 are possible, like pointers, depending on the models ifrastructure. The above variables 
 are mandatory. Other variables might be subject to the models implementations 
-and infrastructure. {: .notice--info}
+and infrastructure. 
+{: .notice--info}
 
 The following code snipset should serve as a minimal example of how to call the routine:
 ```fortran
