@@ -1,6 +1,6 @@
 ---
 title: About this Page
-permalink: /about
+permalink: /zz_about
 ---
 
 This page should give an overview of how to add content.

@@ -1,6 +1,6 @@
 ---
 title: Code Structure
-permalink: /detail
+permalink: /02_detail
 ---
 This page describes the generic structure of the code. It is not model specific 
 and servers only as an outline to understand the purpose of the routines. You will 
@@ -18,11 +18,12 @@ and how its contained subroutines should be called.
 If you're using a model other than the UK MetOffice's UM make sure that the source 
 file ```sea_breeze_diag.F90``` is located in a meaningful subdirectory of the model 
 and that code gets compiled and linked. If you feel adding a new docu on how this can 
-be done for your model please refer to the [about](/about) section on this site.
+be done for your model please refer to the [about](/zz_about) section on this site.
 
 Once correctly compiled and linked the sea-breeze module can be loaded by:
 ```fortran
-use sea_breeze_diag_mod, only: sea_breeze_diag, get_edges, get_dist
+use sea_breeze_diag_mod, only: &
+  sea_breeze_diag, get_edges, get_dist
 ```
 although module contains more the subroutines only ```sea_breeze_diag```, ```get_dist```,
 and ```get_edges``` have to be imported to apply the parametrization.
@@ -253,7 +254,7 @@ end module some_example_init
   end subroutine yet_another_test
 ```
 
-If you are considering implementing this routine take a look at the  [about](/about) 
+If you are considering implementing this routine take a look at the  [about](/zz_about) 
 section to learn more on how to contribute and improve this project. You are encouraged 
 to get in touch via [GitHub](https://github.com/antarcticrainforest/seabreeze_param). 
 Bugs should be reported either on the GitHub [issues](https://github.com/antarcticrainforest/seabreeze_param/issues) 

@@ -73,7 +73,7 @@ All subroutines make use of information from neighboring grid points. It is ther
 that an inter processor communication for boundary swapping (e.g swap_bounds in case of UM) is
 established before calling the subroutines. 
 
-If you are considering implementing this routine take a look at the  [about](/about) 
+If you are considering implementing this routine take a look at the  [about](/zz_about) 
 section to learn more on how to contribute and improve this project. You are encouraged 
 to get in touch via [GitHub](https://github.com/antarcticrainforest/seabreeze_param). 
 Bugs should be reported either on the GitHub [issues](https://github.com/antarcticrainforest/seabreeze_param/issues) 

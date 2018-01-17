@@ -1,16 +1,16 @@
 main:
   - title: "Code Structure"
     description: "A detailed descrption of the fortran routines"
-    url: /detail
+    url: /02_detail
   - title: "Python Wrapper"
     description: "A python wrapper for testing and creating offline diagnosis"
-    url: /python
+    url: /03_python
   - title: "UM Setup"
     description: "Instructions for setting up the code in the UM"
-    url: /install
+    url: /04_install_um
   - title: "About"
     description: "About this page and how to get involved"
-    url: /about
+    url: /zz_about
   - title: "View on GitHub"
     description: "Check out the code on GitHub"
     url: https://github.com/antarcticrainforest/seabreeze_param
@@ -23,15 +23,15 @@ docs:
       description: "Go to Main Page"
     - title: "Code Structure"
       description: "A detailed descrption of the fortran routines"
-      url: /detail
+      url: /02_detail
     - title: "Python Wrapper"
       description: "A python wrapper for testing and creating offline diagnosis"
-      url: /python
+      url: /03_python
     - title: "UM Setup"
       description: "Instructions for setting up the code in the UM"
-      url: /install
+      url: /04_install_um
     - title: "Get Involved"
-      url: /about
+      url: /zz_about
     - title: "Code on GitHub"
       description: "Check out the code on GitHub"
       url: https://github.com/antarcticrainforest/seabreeze_param
