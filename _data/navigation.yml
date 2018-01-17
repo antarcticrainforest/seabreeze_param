@@ -8,6 +8,9 @@ main:
   - title: "UM Setup"
     description: "Instructions for setting up the code in the UM"
     url: /install
+  - title: "About"
+    description: "About this page and how to get involved"
+    url: /about
   - title: "View on GitHub"
     description: "Check out the code on GitHub"
     url: https://github.com/antarcticrainforest/seabreeze_param
@@ -27,6 +30,8 @@ docs:
     - title: "UM Setup"
       description: "Instructions for setting up the code in the UM"
       url: /install
+    - title: "Get Involved"
+      url: /about
     - title: "Code on GitHub"
       description: "Check out the code on GitHub"
       url: https://github.com/antarcticrainforest/seabreeze_param

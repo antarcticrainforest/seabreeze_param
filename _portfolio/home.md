@@ -44,6 +44,17 @@ to the models land area fraction data. The sea-ice
 fraction is also taken into account when calculating the coastline. 
 This is done to avoid the application of the sea-breeze algorithm over areas 
 covered with sea-ice.
+### Steep Terrain
+Coastal areas with steep mountain terrain can cause problems to the algorithm,
+especially on a coars resolution (&ge 75km). In areas with steep topography, 
+large standard deviation of the sub-grid scale orogaphy field, a moist adiabatic
+decent to sea-level hieght (z<sub>0</sub>) is performed and the theoretical 
+temperature at z<sub>0</sub> is calculated. To keep the temperature field 
+continous the sub-grid orography field is filtered by a [sigmoid function](https://en.wikipedia.org/wiki/Sigmoid_function) and a simple moist adiabitic 
+decent is performed to the field:
+
+<center>T = T<sub>z</sub> - ( &Gamma;<sub>moist</sub> &sdot; z &sdot; sigmoid(&sigma;<sub>oro</sub>) )</center>
+
 ## Implementation
 The parametrisation is implemented using the fortran 90 standard. The source code file :
 ```
@@ -61,3 +72,9 @@ which contains the module *sea_breeze_diag_mod* this module has the following su
 All subroutines make use of information from neighboring grid points. It is therefore important
 that an inter processor communication for boundary swapping (e.g swap_bounds in case of UM) is
 established before calling the subroutines. 
+
+If you are considering implementing this routine take a look at the  [about](/about) 
+section to learn more on how to contribute and improve this project. You are encouraged 
+to get in touch via [GitHub](https://github.com/antarcticrainforest/seabreeze_param). 
+Bugs should be reported either on the GitHub [issues](https://github.com/antarcticrainforest/seabreeze_param/issues) 
+pages or by sending an [email](mailto:martin.bergemann@monash.edu) to the author of this page.
