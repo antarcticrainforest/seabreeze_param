@@ -57,17 +57,18 @@ decent is performed to the field:
 
 ## Implementation
 The parametrisation is implemented using the fortran 90 standard. The source code file :
-```
-sea_breeze_diag.f90
-```
-which contains the module *sea_breeze_diag_mod* this module has the following subroutines:
+
+```sea_breeze_diag.f90```
+{: .notice--info}
+
+which contains the module ```sea_breeze_diag_mod``` this module has the following subroutines:
 * seabreeze_diag:
   - Contains the sea-breeze filtering process
 * get_edges:
   - Applies the Sobel operator to create a coast line
 * get_dist:
-  - Calculates the Euclidian distance to the closest coastline point calculated by *get_edges*
-*get_dist* is only called by *get_edges*.
+  - Calculates the Euclidian distance to the closest coastline point calculated by ```get_edges```
+*get_dist* is only called by ```get_edges```.
 
 All subroutines make use of information from neighboring grid points. It is therefore important
 that an inter processor communication for boundary swapping (e.g swap_bounds in case of UM) is
