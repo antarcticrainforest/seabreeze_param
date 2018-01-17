@@ -260,7 +260,6 @@ defaults:
     toc_label: "Content"
     header:
       image: "/assets/images/header.jpg"
-      header: "Noosa Heads, Qld, Aus"
 collections:
   portfolio:
     output: true
