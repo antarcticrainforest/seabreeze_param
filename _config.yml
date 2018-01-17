@@ -12,13 +12,13 @@ github: [metadata]
 locale: "en-US"
 title: "Sea-Breeze Circulations in Global Models"
 title_separator: "-"
-name: "A Sea-Breeze Parametrisation"
+name: "Sea-Breeze Parametrisation"
 description: "A Parametrisation"
 url: "https://antarcticrainforest.github.io" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl: # the subpath of your site, e.g. "/blog"
 repository: "antarcticrainforest/seabreeze_param" # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
- teaser: "/assets/images/500x333.jpg" # path of fallback teaser image, e.g. "/assets/images/500x300.png"
- breadcrumbs: false # true, false (default)
+# teaser: "/assets/images/500x333.jpg" # path of fallback teaser image, e.g. "/assets/images/500x300.png"
+ breadcrumbs: true # true, false (default)
 words_per_minute: 200
 comments:
 provider: # false (default), "disqus", "discourse", "facebook", "google-plus", "staticman", "staticman_v2" "custom"
@@ -253,15 +253,13 @@ defaults:
     read_time: true
     comments:  true
     share: false
-    related: false
+    related: true
     sidebar:
       nav: "docs"
     toc: true
     toc_label: "Content"
     header:
       image: "/assets/images/header.jpg"
-      caption: "Noosa Heads, Qld, Aus"
-      overlay-filter: 0.5
 collections:
   portfolio:
     output: true
