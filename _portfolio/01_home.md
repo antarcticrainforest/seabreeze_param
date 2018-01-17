@@ -46,7 +46,7 @@ This is done to avoid the application of the sea-breeze algorithm over areas
 covered with sea-ice.
 ### Steep Terrain
 Coastal areas with steep mountain terrain can cause problems to the algorithm,
-especially on a coars resolution (&ge 75km). In areas with steep topography, 
+especially on a coars resolution (&ge; 75km). In areas with steep topography, 
 large standard deviation of the sub-grid scale orogaphy field, a moist adiabatic
 decent to sea-level hieght (z<sub>0</sub>) is performed and the theoretical 
 temperature at z<sub>0</sub> is calculated. To keep the temperature field 
