@@ -128,13 +128,15 @@ The only variable that ```Meta``` is created with has to be of type ```Config```
 * datadir (str)
   * the path to the data that should be read
 * prefix (str)
-  * the prefix of the netcdf-filenames containing the data (like ERAI_)
+  * the prefix of the netcdf-filenames containing the data (like ERAI)
 * vp (1D-array)
   * the pressure vector
 * vv (ND-array)
   * the v-wind field
 * vu (ND-array)
   * the u-wind field
+* vtheta (ND-array)
+  * the surface temperature field
 
 The following methods are available:
 #### ```create_nc```:
@@ -170,6 +172,29 @@ Returns:
 
 *   ND-array
 
+<ul style="list-style-type:none">
+<li><b>Note</b>: For Meta to work Config needs the following entries:</li>
+<li><b>landfracfile</b> : Filename of land area fraction (land-sea mask) data</li>
+<li><b> topofile</b>     : Filename of orography data</li>
+<li><b>orofile</b>      : Filename of std of sub-grid orography</li>
+<li><b>vlon</b>         : Variable name for longitude vector</li>
+<li><b>vlat</b>         : Variable name for latitude vector</li>
+<li><b>start</b>        : Start date of the considered period</li>
+<li><b>last</b>         : End date of the considered period</li>
+<li><b>datadir</b>      : Parent directory of the netcdf data</li>
+<li><b>prefix</b>       : Prefix of the netcdf-file names, like ERAI</li>
+<li><b>vp</b>           : Name of the pressure variable</li>
+<li><b>vu</b>           : Name of the u-wind variable</li>
+<li><b>vv</b>           : Name of the v-wind variable</li>
+<li><b>vtheta</b>       : Name of the surf. temp. variable</li></ul>
+{: .notice--info}
+<ul class="notice--info">
+<p><b>Note</b>: The structure of the netcdf files containing the data to be read 
+should have the following format:</p>
+<pre><code class="language-b">datadir/YYYY/prefix_YYYY_MM_DD.nc</code></pre>
+<p>for daily data or:</p>
+<pre><code class="language-b">datadir/YYYY/prefix_YYYY_MM.nc</code></pre>
+<p>for monthly data.</p></ul>
 
 If you are considering implementing this routine take a look at the  [about](/zz_about) 
 section to learn more on how to contribute and improve this project. You are encouraged 
