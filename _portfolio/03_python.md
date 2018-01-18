@@ -113,67 +113,52 @@ M = Meta(C)
 ```
 The only variable that ```Meta``` is created with has to be of type ```Config```.
 
-```Meta``` has the following instances:
+```Meta``` has the following *instances*:
 
-* lon (1D-array)
-  * The longitude vector
-* lat (1D-array)
-  * The latitude vector
-* start (datetime)
-  * the first date of the considered period
-* end (datetime)
-  * the last date of the considered period
-* dates (list)
-  * list of netcdf filenames with data between start and end
-* datadir (str)
-  * the path to the data that should be read
-* prefix (str)
-  * the prefix of the netcdf-filenames containing the data (like ERAI)
-* vp (1D-array)
-  * the pressure vector
-* vv (ND-array)
-  * the v-wind field
-* vu (ND-array)
-  * the u-wind field
-* vtheta (ND-array)
-  * the surface temperature field
+<ul style="list-style-type:none"><li>
+<pre><code class="language-b"><b>lon</b> (1D-array)   : the longitude vector
+<b>lat</b> (1D-array)   : the latitude vector
+<b>start</b> (datetime) : the first date of the considered period
+<b>end</b> (datetime)   : the last date of the considered period
+<b>dates</b> (list)     : list of netcdf filenames with data between start and end
+<b>datadir</b> (str)    : the path to the data that should be read
+<b>prefix</b> (str)     : the prefix of the netcdf-filenames containing the data (like ERAI)
+<b>vp</b> (1D-array)    : the pressure vector
+<b>vv</b> (ND-array)    : the v-wind field
+<b>vu</b> (ND-array)    : the u-wind field
+<b>vtheta</b> (ND-array): the surface temperature field
+</code></pre></li></ul>
+The following *methods* are available:
 
-The following methods are available:
 #### ```create_nc```:
+
+<ul style="list-style-type:none"><li>
 Output the seabreeze data into a netcdf-file
-
+<ul style="list-style-type:none"><li>
 Variables:
-
-* data (ND-array) 
-  * The data that should be written to a netcdf file
-* fname (str) 
-  * The netcdf-filename
-* varname (str) 
-  * The name of the netcdf variable
-* times (1D-array) : 
-  * The time vector
-* add 
-  * suffix for additional information to be added to the netcdf.long_name attribute
-              (dfault : None)
-
-#### ```read```
+<pre><code class="language-b"><b>data</b> (ND-array)  : the data that should be written to a netcdf file
+<b>fname</b> (str)      : the netcdf-filename
+<b>varname</b> (str)    : the name of the netcdf variable
+<b>times</b> (1D-array) : the time vector
+<b>add</b>              : suffix for additional information to be added to the netcdf.long_name attribute (dfault : None)
+</code></pre></li></ul>
+</li></ul>
+#### ```read:```
+<ul style="list-style-type:none"><li>
 This method reads a variable from an opened netcdf file
-
+<ul style="list-style-type:none"><li>
 Variables:
-
-* f (netcdf-ojbect) 
-   * object of the netcdf
-* varname (str) 
-   * variable name to be read
-* timestep (int) 
-   * the time step that should be read, if None the whole array is read (default: None)
-
+<pre><code class="language-b"><b>f</b> (netcdf-ojbect)  : object of the netcdf
+<b>varname</b> (str)      : variable name to be read
+<b>timestep</b> (int)     : the time step that should be read, if None the whole array is read (default: None)
+</code></pre></li></ul>
+<ul style="list-style-type:none"><li>
 Returns:
-
-*   ND-array
-
+<pre><code class="language-b"><b>ND-array</b></code></pre>
+</li></ul>
+</li></ul>
 <ul style="list-style-type:none">
-<li><b>Note</b>: For Meta to work Config needs the following entries:</li>
+<li><b>Note</b> For Meta to work Config needs the following entries:</li>
 <li><b>landfracfile</b> : Filename of land area fraction (land-sea mask) data</li>
 <li><b> topofile</b>     : Filename of orography data</li>
 <li><b>orofile</b>      : Filename of std of sub-grid orography</li>
