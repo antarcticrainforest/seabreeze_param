@@ -32,9 +32,17 @@ docs:
       url: /04_install_um
     - title: "Get Involved"
       url: /zz_about
-    - title: "Code on GitHub"
+  - title: "Code on GitHub"
+    children:
+      title: 'View Repository'
       description: "Check out the code on GitHub"
       url: https://github.com/antarcticrainforest/seabreeze_param
+      title: 'Clone git repository'
+      description: 'Clone the repo'
+      url: https://github.com/antarcticrainforest/seabreeze_param.git
+      title: 'Download zip'
+      description: 'Or download the zipped version'
+      url: https://github.com/antarcticrainforest/seabreeze_param/archive/gh-pages.zip
   - title: " "
 
 
