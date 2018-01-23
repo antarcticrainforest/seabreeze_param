@@ -183,7 +183,12 @@ allocate(sb_con(pdims%i_start:pdims%i_end,pdims%j_start:pdims%j_end))
 #### Edit atm_step_4A.f90
 The creation of the mask that defines coastal areas involves the call of the ```swap_bounds``` routine 
 to comunicate across processing nodes. ```swap_bounds``` should be involved on a high level stage, like in ```atm_step_4a.f90```, 
-which performes the integration of the atmospheric model. Add the following code to ```control/top_level/atm_step_4A.F90```.
+which performes the integration of the atmospheric model. 
+First import the subroutine ```get_edges``` from the ```sea_breeze_diag_mod``` module:
+```fortran
+use sea_breeze_diag_mod, only: get_edges
+```
+Then add the following code to ```control/top_level/atm_step_4A.F90```.
 ```fortran
 !$omp  parallel default(none)                                          &    
 !$omp& shared( wdims,tsurf, tstar, r_u_p2, r_v_p2_n )                  &    
