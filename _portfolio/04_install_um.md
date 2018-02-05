@@ -1,6 +1,6 @@
 ---
 title: UM Setup
-permalink: /04_install_um
+permalink: /um
 ---
 This documentation should explain how to include the sea-breeze diagnosis into 
 the UK Met Office Unified Model (UM). 

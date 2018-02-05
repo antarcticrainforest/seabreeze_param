@@ -1,6 +1,6 @@
 ---
 title: Code Structure
-permalink: /02_detail
+permalink: /generic
 ---
 This page describes the generic structure of the code. It is not model specific 
 and servers only as an outline to understand the purpose of the routines. You will 

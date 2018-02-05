@@ -1,6 +1,6 @@
 ---
 title: Python Wrapper
-permalink: /03_python
+permalink: /python
 ---
 This documentation describes the python wrapper to test the parametrization and 
 to create some offline climatologies. The code is located in the 
