@@ -2,9 +2,10 @@
 title: Code Structure
 permalink: /generic
 ---
-This page describes the generic structure of the code. It is not model specific 
+This page describes the generic structure of the code, see also the generic source code examples 
+in ```generic``` on the ```code`` branch. It is not model specific 
 and servers only as an outline to understand the purpose of the routines. You will 
-not be able to apply this source (everything in the ```model/generic``` folder) 
+not be able to apply this source (everything in the ```generic``` folder) 
 out of the box. The aim of this page is to explain how the source code is organized 
 and how the routines can be called. The preparation varies from model to model, 
 therfore it is essantail that you pay attention to the **Note** boxes.
