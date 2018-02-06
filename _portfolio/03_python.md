@@ -4,7 +4,7 @@ permalink: /python
 ---
 This documentation describes the python wrapper to test the parametrization and 
 to create some offline climatologies. The code is located in the 
-[python_wrapper](https://github.com/antarcticrainforest/seabreeze_param/python_wrapper)
+[python_wrapper](https://github.com/antarcticrainforest/seabreeze_param/tree/code/python_wrapper)
 sub folder. 
 ## Prerequisites
 A working python 2 or python 3 version is required to run the code. You'll also 
