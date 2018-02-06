@@ -13,8 +13,8 @@
         real, dimension(nx) :: lon
         real, dimension(ny) :: lat
         real, dimension(nx,ny,nz) :: &
-          p, u , v, theta
+          p, u , v
         real, dimension(nx,ny) :: &
-          sb_con, land_frac, ice_frac, windspeed, winddir, thc
-        real, dimension(nx+halo_size,ny+halo_size) ::  mask
+          sb_con, land_frac, ice_frac, windspeed, winddir, thc, z, sigma
+        real, dimension(nx+halo_size,ny+halo_size) ::  mask, theta
       end module get_all_fields_mod

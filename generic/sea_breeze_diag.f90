@@ -53,7 +53,7 @@ contains
    !---------------------------------------------------------------------------
 
 subroutine seabreeze_diag(timestep,timestep_number, &
-    p, u, v, theta, mask, windspeed, winddir, thc, sb_con)
+    p, u, v, theta, mask, z, sigma, windspeed, winddir, thc, sb_con)
   ! Definitions of prognostic variable array sizes
   ! Timestep number
   ! use timestep_mod, only: timestep_number
@@ -70,10 +70,12 @@ subroutine seabreeze_diag(timestep,timestep_number, &
       p( : ,  : , : ), &    !> @var P  on rho levels (Pa)
       u( : , : , : ), &     !> @var u on rho levels (Pa)
       v( : , : , : ), &     !> @var v on rho levels (Pa)
-      theta( :, : , : ),&   !> @var Theta (Kelvin)
+      theta( :, :),&   !> @var Surface theta (Kelvin)
       timestep                             !> @var timestep (seconds)
     real, intent(in)     ::             &
-      mask( :, : )    !> var distance form the coast
+      mask( :, : ), &    !> var distance form the coast
+      z(: , :) , &       !> var surface height
+      sigma(: , :)       !> var std of surface height
 
    !---------------------------------------------------------------------------
    ! Subroutine args with intent inout
@@ -88,12 +90,13 @@ subroutine seabreeze_diag(timestep,timestep_number, &
    ! Local variables
    !---------------------------------------------------------------------------
    character (len=*), parameter ::  RoutineName = 'sea_breeze_diag'
+   real, dimension(size(theta,1),size(theta,2)) :: t0 !Surface temp. (tmp array)
    integer ::                                      &
    nlats,nlons,model_lev,     & !> @var local number of lons and lats,model_lev
    elat,slat,elon,slon,       & !> @var first and last lon/lat
    k_start,k_end,             & !> @var start and end point of z-vector
    i,j,iu,ju,il,jl,           & !> @var local Loop counter (horiz. field index).
-   ii, jj,                    & !> @var local compressed array counter.
+   ii, jj,nn,                 & !> @var local compressed array counter.
    k                            !> @var local Loop counter (vert. level index).
    real ,dimension(size(thc,1),size(thc,2))::   &
    windspeed_abs,             & !> @var local wind speep (abs value)
@@ -103,6 +106,7 @@ subroutine seabreeze_diag(timestep,timestep_number, &
    n_winddir,                 & !> @var updated var of the winddirection
    dwinddir,                  & !> @var change in wind direction
    dwindspeed,                & !> @var change in wind speed
+   smod_sigma,                & !> @var sigmoid of std orography
    mwindspeed                   !> @var mean wind speed
    real :: mul,               & !> @var multiplyer for coastal land,sea points
      scale_wind,scale_thc       !> @var scaling factors for wind and thc
@@ -131,6 +135,8 @@ subroutine seabreeze_diag(timestep,timestep_number, &
    real, parameter ::  &
    maxdist = 180.                ! maximum distance that should be influenced by
                                  ! sea-breeze conditions [km]
+   real, parameter :: gmma = -0.0060956     !K/m moist adiabatic lapse-rate
+   logical :: found                         !switch to indicate if coast was found
 
 
    !---------------------------------------------------------------------------
@@ -150,61 +156,75 @@ subroutine seabreeze_diag(timestep,timestep_number, &
    !$ CALL compute_chunk_size(1,model_lev,k_start,k_end)
    !$ CALL compute_chunk_size(pdims%i_start,pdims%i_end,slon,elon)
    !$ CALL compute_chunk_size(pdims%j_start,pdims%j_end,slat,elat)
+    !--------------------------------------------------------------------------
+    ! 1.1 Calculate a theoretical temperature at sea level from moist adiabatic
+    !     descent. This is useful for calculating the temperature contrast in
+    !     coastal areas with steep terrain,
+    !    The calculation is derived from the definiton of the moist
+    !    adiabatic laps rate gamma = dT/dz --> T0 = T1 - gamma * z1
+    !--------------------------------------------------------------------------
+    call sigmoid(sigma,smod_sigma)
+    t0 = theta - ( gmma * z * smod_sigma )
 
 
   do i = slat,elat
     do j = slon,elon
       !n_s = count(mask(j-1:j+1,i-1:i+1),kind=jprb)/real(9,kind=jprb)
       !n_s = sum(mask(j-1:j+1,i-1:i+1))
-      sb_con(j,i) = mask(j,i)
-      !if ( abs(mask(j,i)) > maxdist ) then
+      if ( abs(mask(j,i)) > maxdist ) then
         ! Coast is too far away
-      !  sb_con(j,i) = 2.0E20
-      !else
+        sb_con(j,i) = 0.0
+      else
         ! -----------------------------------------------------------------
         ! 2.1 Calculate thermal heating contrast
         !------------------------------------------------------------------
 
-      !  if ( mask(j,i) >= 0.0 ) then ! Land point
-      !    mul = 1
-      !  else
-      !    mul = -1
-      !  endif
-      !  n_l = 0 ! Set all lil' helper values to zero
-      !  n_s = 0
-      !  T_l = 0
-      !  T_s = 0
+        if ( mask(j,i) >= 0.0 ) then ! Land point
+          mul = 1
+        else
+          mul = -1
+        endif
+      
+      nn = 1 !The search radius to find coastal land AND ocean points
+      !Increase the search Radius until we have found coasta land AND
+      !ocean points (false =- .true.)
+      do while (found .eqv. .false.)
+        n_l = 0 ! Set all lil' helper values to zero
+        n_s = 0
+        T_l = 0
+        T_s = 0
         ! Lop through the neighborhood of the point, check if land or ocean
         ! and calculate the average land and ocen temp T_{l,o}/n_{l,o}
-      !  do ii=i-1,i+1
-      !    do jj=j-1,j+1
-      !      if (mask(jj,ii) >= 0.0) then !Land point
-      !        T_l = T_l + theta(jj,ii)
-      !        n_l = n_l + 1
-      !      else
-      !        T_s = T_s + theta(jj,ii)
-      !        n_s = n_s +1
-      !      endif
-      !    enddo
-      !  enddo
-      !  n_thc(j,i) = mul * ((T_l/n_l) - (T_s/n_s))
+        do ii=i-nn,i+nn
+          do jj=j-nn,j+nn
+            if (mask(jj,ii) >= 0.0) then !Land point
+              T_l = T_l + t0(jj,ii)
+              n_l = n_l + 1
+            else
+              T_s = T_s + t0(jj,ii)
+              n_s = n_s +1
+            endif
+          enddo
+        enddo
+        if (n_s > 0 .and. n_l > 0 ) then ! land & ocean points are found
+          found = .true.                 ! no need to increas search rad.
+        else
+          nn = nn + 1                    !land or ocean points missing
+        end if
+      end do ! while loop
+      ! calculate thermal heating contrast
+      n_thc(j,i) = mul * ((T_l/n_l) - (T_s/n_s))
 
         !------------------------------------------------------------------
         ! 2.1 Calculate the wind speed and direction
         !------------------------------------------------------------------
 
-        ! Get model level for the target pressure
-      !  p_lev_diff = 1000000.
-      !  do k=k_start,k_end
-      !    if ( abs(p(j,i,k) - target_plev) <= p_lev_diff ) then
-      !      p_lev = k
-      !      p_lev_diff = abs(p(j,i,k) - target_plev)
-      !    endif
-      !  enddo
+        !Get model level for the target pressure
+        p_lev = int(minloc(abs(p(j,i,:) - target_plev),1))
         ! Calculate wind speed
-      !  n_windspeed(j,i) = sqrt(u(j,i,p_lev)**2 + v(j,i,p_lev)**2)
+        n_windspeed(j,i) = sqrt(u(j,i,p_lev)**2 + v(j,i,p_lev)**2)
         ! And the direction of the wind in a 2D plane
-      !  n_winddir(j,i) = atan2(-1*u(j,i,p_lev),-1*v(j,i,p_lev)) * rad2deg
+        n_winddir(j,i) = atan2(-1*u(j,i,p_lev),-1*v(j,i,p_lev)) * rad2deg
 
         !------------------------------------------------------------------
         ! 2.2 Check if seabreeze conditions should be updated
@@ -212,39 +232,39 @@ subroutine seabreeze_diag(timestep,timestep_number, &
         !------------------------------------------------------------------
 
         ! If it is the first timestep, neglect wind change and direction
-      !  if ( timestep_number < 2 ) then
-      !    thc(j,i) = n_thc(j,i)
-      !    winddir(j,i) = n_winddir(j,i)
-      !    windspeed(j,i) = n_windspeed(j,i)
-      !  endif
+        if ( timestep_number < 2 ) then
+          thc(j,i) = n_thc(j,i)
+          winddir(j,i) = n_winddir(j,i)
+          windspeed(j,i) = n_windspeed(j,i)
+        endif
           
         ! Calculate avg. thermal heating contrast, and wind conditions
-      !  thc_abs(j,i) = abs(n_thc(j,i))
-      !  mwindspeed(j,i) = (windspeed(j,i) + n_windspeed(j,i)) / 2.
-      !  dwindspeed(j,i) = abs(windspeed(j,i) - n_windspeed(j,i))
+        thc_abs(j,i) = abs(n_thc(j,i))
+        mwindspeed(j,i) = (windspeed(j,i) + n_windspeed(j,i)) / 2.
+        dwindspeed(j,i) = abs(windspeed(j,i) - n_windspeed(j,i))
         ! And get the change in wind direction
-      !  dwinddir(j,i) = abs(modulo((&
-      !                  (winddir(j,i) - n_winddir(j,i)) + 180.),360.) - 180.)
+        dwinddir(j,i) = abs(modulo((&
+                        (winddir(j,i) - n_winddir(j,i)) + 180.),360.) - 180.)
         ! Now apply the threshold rules
-      !  if (  dwinddir(j,i)   < thresh_winddir .and. &
-      !        dwindspeed(j,i) < thresh_windch  .and. &
-      !        mwindspeed(j,i) < thresh_wind    .and. &
-      !        thc_abs(j,i)    > thresh_thc ) then ! All categories are met
+        if (  dwinddir(j,i)   < thresh_winddir .and. &
+              dwindspeed(j,i) < thresh_windch  .and. &
+              mwindspeed(j,i) < thresh_wind    .and. &
+              thc_abs(j,i)    > thresh_thc ) then ! All categories are met
           ! Apply the scaling
-      !    scale_wind = (thresh_wind-mwindspeed(j,i)) / max(real(1,kind=jprb),mwindspeed(j,i))
-      !    scale_thc =  (thc_abs(j,i) - thresh_thc) / n_thc(j,i)
-      !    sb_con(j,i) = scale_thc*scale_wind
-      !  else
-      !    sb_con(j,i) = 0.0 !Something was missing, no sea breeze
-      !  endif
+          scale_wind = (thresh_wind-mwindspeed(j,i)) / max(real(1),mwindspeed(j,i))
+          scale_thc =  (thc_abs(j,i) - thresh_thc) / n_thc(j,i)
+          sb_con(j,i) = scale_thc*scale_wind
+        else
+          sb_con(j,i) = 0.0 !Something was missing, no sea breeze
+        endif
         !update thermal heating contrast and windspeed
-      !  windspeed(j,i) = n_windspeed(j,i)
-      !  thc(j,i) = n_thc(j,i)
+        windspeed(j,i) = n_windspeed(j,i)
+        thc(j,i) = n_thc(j,i)
         
-      !  if ( modulo(real(timestep_number,kind=jprb)*timestep,target_time)<0.0001 ) then
-      !    winddir(j,i) = n_winddir(j,i) !Update the windspeed only every six hours
-      !  endif
-      !endif ! End of Check for coastal points if
+        if ( modulo(real(timestep_number)*timestep,target_time)<0.0001 ) then
+          winddir(j,i) = n_winddir(j,i) !Update the windspeed only every six hours
+        endif
+      endif ! End of Check for coastal points if
     end do ! End of row_length loop
   end do ! End of rows loop
 
@@ -373,7 +393,7 @@ subroutine seabreeze_diag(timestep,timestep_number, &
     real,  intent(in), dimension(:,:) :: coast ! Coastal data
     real,  intent(in), dimension(:,:) :: landfrac ! Land-area fraction
 
-    real,  intent(out), dimension(size(coast,1),size(coast,2)) :: & 
+    real,intent(out), dimension(size(coast,1),size(coast,2)) :: & 
       cdist !Shortest distance to a coastal point (output)
 
     integer :: nlats, nlons
@@ -400,12 +420,11 @@ subroutine seabreeze_diag(timestep,timestep_number, &
       do j=1,nlons
         if ( coast(j,i) > 0.) then ! Check for coastal point
           do ii=-halo_size,halo_size ! Loop through neighborhood ii
-              yy = min(max(1,ii+i),nlats) !Index for lats is bounded
+              yy = i+ii !Index for lats is bounded
               dphi = phi1(i) - phi1(yy)
             do jj=-halo_size,halo_size ! Loop through neighborhood jj
              ! Periodic boundaries for lats
-              xx = modulo(j+jj,nlons)
-              if ( xx == 0 ) xx = nlons
+              xx = j+jj
               if (lon(j) > 180) then !Correct lon
                 l1 = d2r * ( lon(j) - 360. )
               else
@@ -432,6 +451,32 @@ subroutine seabreeze_diag(timestep,timestep_number, &
         if ( abs(cdist(j,i)) > 2*maxdist) cdist(j,i) = 12000.
       enddo !loop lon
   enddo ! loop lat
-  end subroutine get_dist
 
+  end subroutine get_dist
+  
+  subroutine sigmoid(ary,sm)
+    implicit none
+    real, dimension(:,:) ,intent(in) :: ary
+    real, dimension(size(ary,1),size(ary,2)) ,intent(out) :: sm
+    integer  :: nlons,nlats
+    real   :: mean,std,var,r
+    integer :: i,j
+    nlons = size(ary,1)
+    nlats = size(ary,2)
+    mean = sum(ary)/(nlons*nlats)
+    var = 0
+
+    !$omp parallel default(shared) private(j,i)
+    !$omp do schedule(static)
+    do i=1,nlats
+      do j=1,nlons
+        var = var + (ary(j,i)-mean)**2
+      enddo
+    enddo
+    !$omp end do nowait
+    !$omp end parallel
+    std = 2/sqrt( var / (nlons*nlats) )
+    r = ( maxval(ary) - minval(ary) ) / 4.
+    sm = 1 / ( 1 + exp(-std*(ary-r) ) )
+  end subroutine sigmoid
 end module sea_breeze_diag_mod

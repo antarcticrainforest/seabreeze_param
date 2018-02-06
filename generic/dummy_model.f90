@@ -32,24 +32,25 @@
             call get_edges(mask, ice_frac, land_frac, halo_size)
             call get_dist(mask, land_frac, lon, lat, 180, cdist, &
               halo_size)
-            call physics(p, u, v, theta, mask, windspeed, winddir, thc,&
-              sb_con,timestep_number, timestep)
+            call physics(p, u, v, theta, z, sigma ,mask, windspeed, & 
+              winddir, thc, sb_con,timestep_number, timestep)
           end subroutine atmos_step
 
-          subroutine physics(p,u,v, theta, mask, windspeed, winddir,&
-              thc, sb_con, timestep_number, timestep)
+          subroutine physics(p,u,v, theta, z ,sigma, mask, windspeed,& 
+              winddir, thc, sb_con, timestep_number, timestep)
             use sea_breeze_diag_mod, only : seabreeze_diag
             implicit none
             real, intent(in), dimension(:,:,:) :: & 
-              p, u, v, theta
+              p, u, v
             real, intent(in), dimension(:,:) :: &
-              mask
+              mask, theta, z, sigma
             real, intent(inout), dimension(:,:) :: &
               thc, windspeed, winddir, sb_con
             real, intent(in) :: timestep
             integer, intent(in) :: timestep_number
 
             call seabreeze_diag(timestep,timestep_number, &
-              p, u, v, theta, mask, windspeed, winddir, thc, sb_con)
+              p, u, v, theta, z, sigma, mask, windspeed, winddir, thc, & 
+              sb_con)
           end subroutine physics
       end program dummy_model
