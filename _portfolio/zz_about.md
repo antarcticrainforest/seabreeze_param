@@ -11,7 +11,7 @@ model you are using it is very much appreciated if you add your source code to
 the [GitHub porject](https://github.com/antarcticrainforest/seabreeze_param). 
 Your source code should be added to the following directory structure:
 
-code/modelname/
+code/modelname/version
 {: .notice--info}
 
 Once the source code is added a docu about it should be added to the github-pages 
