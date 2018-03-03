@@ -3,7 +3,7 @@ title: Code Structure
 permalink: /generic
 ---
 This page describes the generic structure of the code, see also the generic source code examples
-in ```generic``` on the ```code`` branch. It is not model specific
+in ```generic``` on the ```code``` branch. It is not model specific
 and servers only as an outline to understand the purpose of the routines. You will
 not be able to apply this source (everything in the ```generic``` folder)
 out of the box. The aim of this page is to explain how the source code is organised
@@ -259,5 +259,5 @@ end module some_example_init
 If you are considering implementing this routine take a look at the  [about](/zz_about)
 section to learn more on how to contribute and improve this project. You are encouraged
 to get in touch via [GitHub](https://github.com/antarcticrainforest/seabreeze_param).
-Bugs should be reported either on the Git Hub [issues](https://github.com/antarcticrainforest/seabreeze_param/issues) 
+Bugs should be reported either on the Git Hub [issues](https://github.com/antarcticrainforest/seabreeze_param/issues)
 pages or by sending an [email](mailto:martin.bergemann@monash.edu) to the author of this page.
