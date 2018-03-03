@@ -2,17 +2,17 @@
 title: Python Wrapper
 permalink: /python
 ---
-This documentation describes the python wrapper to test the parametrization and 
-to create some offline climatologies. The code is located in the 
+This documentation describes the python wrapper to test the parametrisation and
+to create some off-line climatologies. The code is located in the
 [python_wrapper](https://github.com/antarcticrainforest/seabreeze_param/tree/code/python_wrapper)
-sub folder. 
+sub folder.
 ## Prerequisites
-A working python 2 or python 3 version is required to run the code. You'll also 
-need a working [numpy](http://www.numpy.org) python package. It is also recommended 
-to have the [netCDF4](https://pypi.python.org/pypi/netCDF4) package available to your 
-python distribution. You will also need the gfrotran and gcc compilers in order 
-to build the python module from the fortran source files. The compiling 
-process involves the fortran to C wrapper [f2py](http://www.f2py.com) which comes 
+A working python 2 or python 3 version is required to run the code. You'll also
+need a working [numpy](http://www.numpy.org) python package. It is also recommended
+to have the [netCDF4](https://pypi.python.org/pypi/netCDF4) package available to your
+python distribution. You will also need the gfrotran and gcc compilers in order
+to build the python module from the Fortran source files. The compiling
+process involves the Fortran to C wrapper [f2py](http://www.f2py.com) which comes
 with the numpy's distutils package.
 
 ## Building and Installing
@@ -21,26 +21,26 @@ Building and installing is most simple:
 $: python setup.py build
 $: python setup.py intall
 ```
-The latter command will install the built python package into the root file system; 
-usually ```/usr/lib/pythonX.X/site-packages```. If you don't have write acces to 
+The latter command will install the built python package into the root file system;
+usually ```/usr/lib/pythonX.X/site-packages```. If you don't have write access to
 ```/usr/lib/``` install the packages with the ```--user``` option:
 ```bash
 $: python setup.py install --user
 ```
-This will install the packages in ```$HOME/.local/lib/pythonX.X/site-packages/```. 
-With X.X being the python version (e.g 3.6). If this directory doesn't already exsist create it with:
+This will install the packages in ```$HOME/.local/lib/pythonX.X/site-packages/```.
+With X.X being the python version (e.g 3.6). If this directory doesn't already exist create it with:
 ```bash
 $: mkdir -p $HOME/.local/lib/pythonX.X/site-packages/
 ```
 
-You should now be able to import the seabreeze package:
+You should now be able to import the sea-breeze package:
 ```python
 >>> import seabreezediag as sbd
 ```
 ## The Classes
 The python package contains a couple of classes which are described here.
 ### The ```Config``` class
-Read a configuration file and return it's content stored in a dictionary 
+Read a configuration file and return it's content stored in a dictionary
 object.
 <ul style="list-style-type:none"><li>
 Variables:
@@ -49,8 +49,8 @@ Variables:
 </font></code></pre></li></ul>
 <ul style="list-style-type:none"><li>
 Keywords:
-<pre><code class="language-b"><font size='2'><b>maketuple</b> (bool)    : if maketuple is True the method tries 
-                         to interprete values with , as seperators for tuple values 
+<pre><code class="language-b"><font size='2'><b>maketuple</b> (bool)    : if maketuple is True the method tries
+                         to interprete values with , as seperators for tuple values
                          (<em>defautl</em> : True)
 <b>skipwhitespace</b> (bool) : whitespaces wont be considered if set True
                          (<em>defautl</em> : True)
@@ -63,7 +63,7 @@ Example:
 Consider the following simple configuration file:
 ```bash
 $: cat test.conf
-#Filename of the test data
+#Filen ame of the test data
 filename = 'foo.nc' #
 variable = bar # The variable to be considered
  x1 = 9.0 # First index
@@ -86,11 +86,11 @@ variable | bar
 x1       | 9.0
 ```
 
-The class tries to open the file filename, read it and create a class instance 
+The class tries to open the file ```filename```, read it and create a class instance
 for every key entry
 
 **Note**: Every key is an instance of Conf but Conf itself is of type dict
-          therefore the intances can be accesses both ways 
+          therefore the instance can be accesses both ways
 {: .notice--info}
 Example:
 ```python
@@ -102,7 +102,7 @@ Ture
 
 
 ### The ```Meta``` class
-The ```Meta``` class is not a meta class. It can be used to read important (static) 
+The ```Meta``` class is not a meta class. It can be used to read important (static)
 meta data from netcdf-files; like Longitude, Latitude vectors and other data.
 
 The object is created by calling :
@@ -120,9 +120,9 @@ The only variable that ```Meta``` is created with has to be of type ```Config```
 <b>lat</b> (1D-array)   : the latitude vector
 <b>start</b> (datetime) : the first date of the considered period
 <b>end</b> (datetime)   : the last date of the considered period
-<b>dates</b> (list)     : list of netcdf filenames with data between start and end
+<b>dates</b> (list)     : list of netcdf file names with data between start and end
 <b>datadir</b> (str)    : the path to the data that should be read
-<b>prefix</b> (str)     : the prefix of the netcdf-filenames containing the data (like ERAI)
+<b>prefix</b> (str)     : the prefix of the netcdf file names containing the data (like ERAI)
 <b>vp</b> (1D-array)    : the pressure vector
 <b>vv</b> (ND-array)    : the v-wind field
 <b>vu</b> (ND-array)    : the u-wind field
@@ -137,7 +137,7 @@ Output the seabreeze data into a netcdf-file
 <ul style="list-style-type:none"><li>
 Variables:
 <pre><code class="language-b"><font size='2'><b>data</b> (ND-array)  : the data that should be written to a netcdf file
-<b>fname</b> (str)      : the netcdf-filename
+<b>fname</b> (str)      : the netcdf file name
 <b>varname</b> (str)    : the name of the netcdf variable
 <b>times</b> (1D-array) : the time vector
 <b>add</b>              : suffix for additional information to be added to the netcdf.long_name attribute (dfault : None)
@@ -159,9 +159,9 @@ Returns:
 </li></ul>
 <ul style="list-style-type:none">
 <li><b>Note</b> For Meta to work Config needs the following entries:</li>
-<li><b>landfracfile</b> : Filename of land area fraction (land-sea mask) data</li>
-<li><b> topofile</b>     : Filename of orography data</li>
-<li><b>orofile</b>      : Filename of std of sub-grid orography</li>
+<li><b>landfracfile</b> : File name of land area fraction (land-sea mask) data</li>
+<li><b> topofile</b>     : File name of orography data</li>
+<li><b>orofile</b>      : File name of std of sub-grid orography</li>
 <li><b>vlon</b>         : Variable name for longitude vector</li>
 <li><b>vlat</b>         : Variable name for latitude vector</li>
 <li><b>start</b>        : Start date of the considered period</li>
@@ -174,7 +174,7 @@ Returns:
 <li><b>vtheta</b>       : Name of the surf. temp. variable</li></ul>
 {: .notice--info}
 <ul class="notice--info">
-<p><b>Note</b>: The structure of the netcdf files containing the data to be read 
+<p><b>Note</b>: The structure of the netcdf files containing the data to be read
 should have the following format:</p>
 <pre><code class="language-b">datadir/YYYY/prefix_YYYY_MM_DD.nc</code></pre>
 <p>for daily data or:</p>
@@ -189,12 +189,12 @@ This is the class that does the actual work. It is simply imported by:
 The class offers the following methods:
 #### ```sbd.f2c(array)```
 <ul style="list-style-type:none"><li>
-Convert from column/row major to row/column major. This function has been added, 
-to convert 
+Convert from column/row major to row/column major. This function has been added,
+to convert
 <ul style="list-style-type:none"><li>
 Variables:
 <pre><code class="language-b"><font size='2'><b>f</b> (netcdf-ojbect)  : object of the netcdf
-<b>array</b> (ND-array)  : array of rank N and any typ to be converted
+<b>array</b> (ND-array)  : array of rank N and any type to be converted
 </font></code></pre></li></ul>
 <ul style="list-style-type:none"><li>
 Returns:
@@ -262,7 +262,7 @@ Variables:
 <b>v</b> (ND-array)   : V-component of the wind stored ([time],pres,lat,lon) ,time is optional
 <b>t</b> (ND-array)   : Surface temperature array  ([time],lat,lon), time is optional
 <b>ci</b> (ND-array)  : Fraction of sea-ice cover [0..1] ([time],lat,lon)
-                 time is optional. Ci can be set to None, in which case 
+                 time is optional. Ci can be set to None, in which case
                  it won't be taken into account for calculation.
 </font></code></pre></li></ul>
 <ul style="list-style-type:none"><li>
@@ -273,7 +273,7 @@ Keywords:
                           (<em>default</em>: zero array)
 <b>thc</b> (2D-array)          : Thermal heating contrast, passed through the application period (lat,lon)
                           (<em>default</em>: zero array)
-<b>target_plev</b> (float)     : P-level (hPa) for wind thresh application 
+<b>target_plev</b> (float)     : P-level (hPa) for wind thresh application
                           (<em>default</em>: 700.)
 <b>thresh_wind</b> (float)     : Thresh. of wind speed  (m/s)
                           (<em>default</em>: 11.)
@@ -291,7 +291,7 @@ Keywords:
                        (<em>default</em>: 180.)
 <b>timestep</b> (float)      : Time stepping of the model (mins)
                        (<em>default</em>: 24.)
-<b>meta</b> (float)          : If meta is of type <em>namedtuple</em> the arguments 
+<b>meta</b> (float)          : If meta is of type <em>namedtuple</em> the arguments
                        for the u-array, v-array, t-array and ci-array are skipped and
                        the data is taken from meta (<em>default</em>: None)
 </font></code></pre></li></ul>
@@ -335,12 +335,12 @@ Returns:
 ```
 
 
-The file ```test_run.py``` in the  ```python_wrapper``` directory provides an 
+The file ```test_run.py``` in the  ```python_wrapper``` directory provides an
 example application of the module.
 
 
-If you are considering implementing this routine take a look at the  [about](/zz_about) 
-section to learn more on how to contribute and improve this project. You are encouraged 
-to get in touch via [GitHub](https://github.com/antarcticrainforest/seabreeze_param). 
-Bugs should be reported either on the GitHub [issues](https://github.com/antarcticrainforest/seabreeze_param/issues) 
+If you are considering implementing this routine take a look at the  [about](/zz_about)
+section to learn more on how to contribute and improve this project. You are encouraged
+to get in touch via [Git Hub](https://github.com/antarcticrainforest/seabreeze_param).
+Bugs should be reported either on the Git Hub [issues](https://github.com/antarcticrainforest/seabreeze_param/issues) 
 pages or by sending an [email](mailto:martin.bergemann@monash.edu) to the author of this page.
