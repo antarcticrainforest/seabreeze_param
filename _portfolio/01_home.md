@@ -39,11 +39,12 @@ The blue letters represent applied thresholds, the g's indicate the values of th
 The above described algorithm is only applied in coastal areas that are
 influenced by land-sea-breeze circulation systems. This radius of influence
 is typically in the order of &cong; 150km on- and offshore along the coastline.
-The coastline is calculated by applying a [_Sobel Operator_](https://en.wikipedia.org/wiki/Sobel_operator)
-to the models land area fraction data. The sea-ice
-fraction is also taken into account when calculating the coastline.
-This is done to avoid the application of the sea-breeze algorithm over areas
-covered with sea-ice.
+The coastline is calculated by applying a [_Sobel Operator (S)_](https://en.wikipedia.org/wiki/Sobel_operator)
+to the models land-area ( *L* ) and sea-ice fraction data ( *I* ). Sea-ice is taken into account to avoid the calculation of coastlines that are covered by sea-ice. The coastline can defined by:
+<img src="https://latex.codecogs.com/gif.latex?C=\sqrt{(S\circledast(L+I))^2+(S^T\circledast(L+I))^2} \text{ with }S=\left(\begin{array}{ccc}1 & 0 & -1\\2 &0 & -2 \\ 1 & 0 & -1 \end{array}\right)" />
+
+Where <img src="https://latex.codecogs.com/gif.latex?\circledast"/> denotes the convolution operator.
+
 ### Steep Terrain
 Coastal areas with steep mountain terrain can cause problems to the algorithm,
 especially on a coarse resolution (&ge; 75km). In areas with steep topography,
