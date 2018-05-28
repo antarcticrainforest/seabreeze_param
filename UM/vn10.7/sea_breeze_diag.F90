@@ -262,7 +262,16 @@ subroutine seabreeze_diag(timestep,timestep_number, &
         !------------------------------------------------------------------
 
         ! Get model level for the target pressure
-        p_lev = int(minloc(abs(p(j,i,:) - target_plev),1))
+        p_lev_diff = 1000000.
+        do k=k_start,k_end
+          if ( abs(p(j,i,k) - target_plev) <= p_lev_diff ) then
+            p_lev = k
+            p_lev_diff = abs(p(j,i,k) - target_plev)
+          else
+            exit
+         endif
+        enddo
+        !p_lev = int(minloc(abs(p(j,i,:) - target_plev),1))
         ! Calculate wind speed
         n_windspeed(j,i) = sqrt(u(j,i,p_lev)**2 + v(j,i,p_lev)**2)
         ! And the direction of the wind in a 2D plane
