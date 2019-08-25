@@ -17,6 +17,7 @@ def get_meta(fn, vn, M):
         for s in ('DJF','MAM','JJA','SON'):
             data[v][s]=np.zeros_like(D)
     return ts,data
+
 def get_data(fn,vn):
     '''Return the data in a netcdf array'''
 

@@ -19,25 +19,38 @@ def main(**kwargs):
         #Ts is of form of 'YYYY_MM' or 'YYYY_MM_DD'
         year=ts.split('_')[0]
         tstring = os.path.join(M.datadir,year,'%sXXX_%s.nc'%(M.prefix,ts))
-        f_sb=tstring.replace('XXX','sb') #Define the output netcdf-file
+        f_sb=tstring.replace('XXX', 'sb') #Define the output netcdf-file
         sys.stdout.flush()
         sys.stdout.write('Creating sea-breeze data for %s ... '%os.path.basename(f_sb))
         sys.stdout.flush()
         vars={}
-        for v in ('vu','vv','vtheta','vci'):
-            vars[v]=tstring.replace('XXX',Cfg[v])
+        for v in ('vu', 'vv', 'vtheta', 'vci'):
+            vars[v]=tstring.replace('XXX', Cfg[v])
         # Read the netcdf-file containing the input data
-        nc_data = sbd.read_nc(vars['vv'],vars['vu'],vars['vtheta'],vars['vci'],\
-                vv=Cfg.vv,vu=Cfg.vu,vtheta=Cfg.vtheta)
+        nc_data = sbd.read_nc(vars['vv'],
+                              vars['vu'],
+                              vars['vtheta'],
+                              vars['vci'],
+                              vv=Cfg.vv,
+                              vu=Cfg.vu,
+                              vpres=Cfg.vpres,
+                              vtime=Cfg.vtime,
+                              vtheta=Cfg.vtheta)
+        tt, sb_con, thc, windspeed, winddir = sbd.diag(tt,
+                                                       M.landfrac,
+                                                       M.z,
+                                                       M.std,
+                                                       M.lon,
+                                                       M.lat,
+                                                       nc_data.pres,
+                                                       meta=nc_data,
+                                                       ws=windspeed,
+                                                       wd=winddir,
+                                                       thc=thc)
 
-        tt,sb_con,thc,windspeed,winddir=sbd.diag(tt,M.dist,M.z,M.std,M.lon,M.lat,\
-                meta=nc_data,ws=windspeed,wd=winddir,thc=thc)
-
-        #for vn,d in (('sb_con',sb_con[0]),('thc',sb_con[1])):
-        #Write the output to a netcdf-file
-        M.create_nc(sb_con,f_sb,'sb_con',meta.time) 
+        M.create_nc(sb_con,f_sb,'sb_con', nc_data.time)
         #Close all opened netcdf files
-        for f in meta.nc.values():
+        for f in nc_data.nc.values():
             f.close()
         del sb_con
         sys.stdout.flush()

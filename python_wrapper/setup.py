@@ -10,7 +10,7 @@ meta=dict(\
         version = '0.1')
 
 wrapper = Extension('seabreeze', sources=['seabreezediag/seabreeze_diag_python.f90','seabreezediag/sobel.f90'],
-        extra_f90_compile_args=["-g -O3 -std=f2003  -fsign-zero -fbounds-check -Wpedantic -shared -fPIC -fopenmp"],
+        extra_f90_compile_args=["-g -std=f2003  -fsign-zero -fbounds-check -Wpedantic -shared -fPIC -fopenmp"],
         library_dirs=['/usr/lib'],
         include_dirs=['/usr/include'],
         libraries=['gomp'])

@@ -38,6 +38,7 @@ def c2f(array):
     '''
     sh = array.shape[::-1]
     return array.ravel().reshape(sh,order='F')
+
 def check(kw,key,value):
     ''' Check for the presence in a dictionary and return the value, and if not
         present return a default value
@@ -48,10 +49,12 @@ def check(kw,key,value):
     except KeyError:
         pass
     return value
-def read_nc(fnv,fnu,fntheta,fnci,vv='v',vu='u',vtheta='t2m',vci='ci'):
+
+def read_nc(fnv, fnu, fntheta, fnci,vv='v', vu='u', vtheta='t2m', vci='ci', 
+            vpres='pres', vtime='time'):
     """
       Function to read meta data from various netcdf-sources
-      
+
       Variables:
         fnv (str)     : name of the v-wind netcdf file
         fnu (str)     : name of the u-wind netcdf file
@@ -60,39 +63,32 @@ def read_nc(fnv,fnu,fntheta,fnci,vv='v',vu='u',vtheta='t2m',vci='ci'):
         vv (str)      : name of the v-wind netcdf variable (default : v)
         vu (str)      : name of the u-wind netcdf variable (default : u)
         vtheta (str)  : name of the of the surf temp var. (default : t2m)
+        vpres (str)   : name of the of the presure var. (default : pres)
         vci (str)     : name of the sea-ice variable (default : ci)
-       
+
        Returns named tuple:
     """
     from netCDF4 import Dataset as nc, num2date
     from collections import namedtuple
     import os
-    data=dict(v=vv,u=vu,theta=vtheta,ci=vci)
-    meta = namedtuple('meta','time pres dt nc '+' '.join(data.keys()))
-    get_meta=True
+    data = dict( v=vv, u=vu, theta=vtheta, ci=vci, pres=vpres)
+    meta = namedtuple('meta','time dt nc '+' '.join(data.keys()))
+    get_meta = True
     usr = os.path.expanduser
-    meta.nc={'v':nc(usr(fnv)),'u':nc(usr(fnu)),'theta':nc(usr(fntheta))
-            ,'ci':nc(usr(fnci))}
-    for v,ncf in meta.nc.items():
+    meta.nc = {'v':nc(usr(fnv)),'u':nc(usr(fnu)),'theta':nc(usr(fntheta))
+               ,'ci':nc(usr(fnci))}
+
+    for v, ncf in meta.nc.items():
         setattr(meta,v,ncf.variables[data[v]])
-        if get_meta:
-            dims = ncf.variables[data[v]].dimensions
-            tdim = dims[0]
-            pdim = dims[1]
-            for varn in ncf.variables.keys():
-                if len(ncf.variables[varn].dimensions) == 1:
-                    if ncf.variables[varn].dimensions[0] == tdim:
-                        tvar = varn
-                    elif ncf.variables[varn].dimensions[0] == pdim:
-                        pvar = varn
-            meta.time=num2date(ncf.variables[tvar][:],ncf.variables[tvar].units)
-            meta.pres = ncf.variables[pvar][:]
-            meta.dt = (meta.time[1]-meta.time[0]).seconds/60.
-            get_meta=False
+
+    dims = meta.nc['v'].dimensions
+    meta.time = num2date(meta.nc['v'].variables[vtime][:],
+                         meta.nc['v'].variables[vtime].units)
+    meta.pres = meta.nc['v'].variables[vpres][:]
+    meta.dt = (meta.time[1]-meta.time[0]).seconds/60.
     return meta
 
-#def diag(tt,d,*args,meta=None,ws=None,wd=None,thc=None,**kwargs):
-def diag(tt, lsm, z, std, lon, lat, *args, **kwargs):
+def diag(tt, lsm, z, std, lon, lat, pres, *args, **kwargs):
     """
     Calculate potential strength of sea-breeze convergence within a predefined
     coastal area (see Bergemann et al. 2017 doi:10.1002/2017MS001048 for detail)
@@ -113,7 +109,7 @@ def diag(tt, lsm, z, std, lon, lat, *args, **kwargs):
         the longitude vector of the model
     lat: 1-D array of type-float
         the latitude vector of the model
-    p: 1-D array of type-float
+    pres: 1-D array of type-float
         Pressure levels in Pa stored in a 1D array
     u: N-D array of type-float
         U-component of the wind  ([time],pres,lat,lon)
@@ -192,16 +188,14 @@ def diag(tt, lsm, z, std, lon, lat, *args, **kwargs):
             >>> test_nc.close()
     """
     import os,sys
-    #dir=os.path.dirname(os.path.abspath(sys.argv[0]))
-    #sys.path.append(os.path.join(dir,'seabreezediag'))
     ws = check(kwargs,'ws',None)
     wd = check(kwargs,'wd',None)
     thc = check(kwargs,'thc',None)
     meta= check(kwargs,'meta',None)
     if type(meta) == type(None):
-        p,u,v,t,ci = args
+        u, v, t, ci = args
     else:
-        p,u,v,t = meta.pres,meta.u,meta.v,meta.theta
+        u, v, t = meta.u, meta.v, meta.theta
         try:
             ci = meta.ci
         except AttributeError:
@@ -210,17 +204,18 @@ def diag(tt, lsm, z, std, lon, lat, *args, **kwargs):
     if type(ws) == type(None):
         if tt > 1 :
             warnings.warn('Windspeed should be given from previous timestep')
-        ws = np.zeros_like(d)
+        ws = np.zeros_like(lsm)
     if type(wd) == type(None):
         if tt > 1 :
             warnings.warn('Wind direction should be given from previous timestep')
-        wd = np.zeros_like(d)
+        wd = np.zeros_like(lsm)
     if type(thc) == type(None):
         if tt > 1 :
             warnings.warn('Heating contrast should be given from previous timestep')
-        thc = np.zeros_like(d)
+        thc = np.zeros_like(lsm)
     if type(ci) == type(None):
-        dist = c2f(get_dist(get_edges(c2f(lsm),c2f(np.zeros_like(c))),c2f(lsm),lon,lat))
+        dist = c2f(get_dist(get_edges(c2f(lsm),c2f(np.zeros_like(c))),
+            c2f(lsm),lon,lat))
     if len(v.shape) > 3:
         #Time is also contained
         sb_con=np.zeros([4,len(v),t.shape[-2],t.shape[-1]])
@@ -231,8 +226,17 @@ def diag(tt, lsm, z, std, lon, lat, *args, **kwargs):
                 except AttributeError:
                     ic = ci[ts]
                 dist = c2f(get_dist(get_edges(c2f(lsm),c2f(ic)),c2f(lsm),lon,lat))
-            out = c2f(dg(tt,c2f(p),c2f(z),c2f(std),c2f(t[ts]),c2f(v[ts]),c2f(u[ts]),
-                c2f(dist),c2f(ws),c2f(wd),c2f(thc),**kwargs))
+            out = c2f(dg(tt,
+                         c2f(pres),
+                         c2f(z),
+                         c2f(std),
+                         c2f(t[ts]),
+                         c2f(v[ts]),
+                         c2f(u[ts]),
+                         c2f(dist),
+                         c2f(ws),
+                         c2f(wd),
+                         c2f(thc),**kwargs))
             sb_con[0,ts] = out[0]
             sb_con[1,ts] = out[1]
             sb_con[2,ts] = out[2]
@@ -257,5 +261,4 @@ def diag(tt, lsm, z, std, lon, lat, *args, **kwargs):
         tt += 1
     del out
     return tt,sb_con[0],thc,ws,wd
-
 

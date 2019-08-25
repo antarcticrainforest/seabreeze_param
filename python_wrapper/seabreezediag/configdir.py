@@ -39,7 +39,9 @@ class Meta(object):
 
         #Open the meta-data of the file containing the distance form the 
         # coast information 
-        for fn,vn in ((C.landfracfile,'land'),(C.topofile,'z'),(C.orofile,'std')):
+        for fn, vn in ((C.landfracfile, 'landfrac'),
+                       (C.topofile,'z'),
+                       (C.orofile,'std')):
             with nc(os.path.expanduser(fn)) as f:
                 try:
                     setattr(self,vn,f.variables[C['v%s'%vn]][0,0,:,:])
@@ -52,14 +54,15 @@ class Meta(object):
                 self.lat = f.variables[C.vlat][:]
         self.start=datetime.strptime(C.start,'%Y-%m-%d_%H:%M')
         self.end=datetime.strptime(C.end,'%Y-%m-%d_%H:%M')
-        for i in ('vtheta','prefix','vp','datadir','vu','vv'):
+        for i in ('vtheta', 'prefix', 'vpres', 'datadir', 'vu', 'vv'):
             if i == 'datadir':
-                setattr(self,i,os.path.expanduser(C[i]))
+                setattr(self, i, os.path.expanduser(C[i]))
             else:
-                setattr(self,i,C[i])
+                setattr(self, i, C[i])
         #Get all netcdf files between start and end
         self.__get_dates()
-    def read(self,f,varname,timestep=None):
+
+    def read(self, f, varname, timestep=None):
         '''
         This method reads the a netcdf variable from an opened netcdf file
         Variables:
@@ -71,22 +74,11 @@ class Meta(object):
             ND-array : data 
         '''
         if type(timestep) == type(None):
-            data=f.variables[varname][:]
+            data = f.variables[varname][:]
         else :
             data = f.variables[varname][timestep]
-        
         return data
 
-    '''def get_times_output(self):
-        out = []
-        index = []
-        for tt in self.time:
-            t = datetime(tt.year,tt.month,tt.day,tt.hour,0)
-            s = date2num(t,'seconds since 1970-01-01 00:00:00')
-            if s not in out and t.hour in range(0,24,6):
-                out.append(s)
-                index.append(t)
-        return np.array(index)'''
     def __get_dates(self):
         ''' Return all netcdf-files containing data for the considered period
         Variables : None
@@ -94,29 +86,27 @@ class Meta(object):
         '''
         ts = self.start
         dt = timedelta(days=1)
-        dates=[]
-        
-        fn=os.path.join(self.datadir,'%04i'%ts.year,self.prefix+'*'+\
+        dates = []
+        fn = os.path.join(self.datadir,'%04i'%ts.year,self.prefix+'*'+\
                     '%s'%ts.strftime('%Y_??_??.nc'))
         if len(glob.glob(fn))>0:
             daily=True
         else:
-            fn=os.path.join(self.datadir,'%04i'%ts.year,self.prefix+'*'\
+            fn = os.path.join(self.datadir,'%04i'%ts.year,self.prefix+'*'\
                     +'%s'%ts.strftime('%Y_??.nc'))
             if len(glob.glob(fn))>0:
                 daily=False
             else:
-                sys.stderr.write('Only daily or monthly file-format is supported\n')
-                sys.exit(257)
+                raise ValueError('Only daily or monthly file-format is supported\n')
 
         while ts < self.end:
             if daily:
-                tstring=ts.strftime('%Y_%m_%d')
+                tstring = ts.strftime('%Y_%m_%d')
             else:
-                tstring=ts.strftime('%Y_%m')
-            fn=os.path.join(self.datadir,'%04i'%ts.year,self.prefix+'*_'\
+                tstring = ts.strftime('%Y_%m')
+            fn = os.path.join(self.datadir,'%04i'%ts.year,self.prefix+'*_'\
                     +'%s.nc'%tstring)
-            all_present=True
+            all_present = True
             for v in (self.vv, self.vu,self.vtheta):
                 F = fn.replace('*',v)
                 if not os.path.isfile(F):
@@ -127,12 +117,6 @@ class Meta(object):
             ts += dt
 
         self.dates = dates
-
-    '''def meta_info(self):
-        #Get the rest of important meta data
-        self.get_dates()
-        f=self.dates[0]
-        year=f.split('_')[0]'''
 
     def create_nc(self,data,fname,varname,times,add=''):
         '''Output the seabreeze data into a netcdf-file
