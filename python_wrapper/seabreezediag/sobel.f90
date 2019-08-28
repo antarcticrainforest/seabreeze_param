@@ -154,7 +154,6 @@
         do i=1,nlats
           do j=1,nlons
             !$ nt = omp_get_thread_num()
-            write(*,*) nt,i,j
             if ( coast(j,i) > 0.) then ! Check for coastal point
               do ii=-k,k ! Loop through neighborhood ii
                   yy = min(max(1,ii+i),nlats) !Index for lats is bounded
